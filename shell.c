@@ -20,7 +20,7 @@ int main(void)
 	char *buffer;
 	static int first_time = 1;
 	int id;
-	char *envp[] = {"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin"};
+	char *envp[] = {"SHELL=/bin/bash", NULL};
 
 	buffer = malloc(sizeof(char) * buf_size);
 
@@ -30,8 +30,9 @@ int main(void)
 		
 		line = getline(&buffer, &buf_size, stdin);
 		
-		/*char *argv[] = {"/bin/ls", "-l", "alx-low_level_programming/", NULL};*/
 		char *argv[line + 1];
+
+		argv[0] = "/bin/ls";
 
 		id = fork();
 		if (id != 0)
