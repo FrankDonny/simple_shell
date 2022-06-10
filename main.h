@@ -7,6 +7,6 @@
 #include <sys/wait.h>
 #include <string.h>
 
-void promt(void);
+void prompt(void);
 
 #endif

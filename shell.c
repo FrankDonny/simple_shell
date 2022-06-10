@@ -1,17 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <string.h>
+#include "main.h"
 
-void promt(void)
-{
-	static int ft = 1;
-
-	while (ft)
-		ft = 0;
-	printf("$ ");
-}
+/**
+ * main - the main shell function
+ * Return: always 0
+ */
 
 int main(void)
 {
@@ -26,10 +18,10 @@ int main(void)
 
 	while (1)
 	{
-		promt();
-		
+		prompt();
+
 		line = getline(&buffer, &buf_size, stdin);
-		
+
 		char *argv[line + 1];
 
 		argv[0] = "/bin/ls";
@@ -39,9 +31,9 @@ int main(void)
 			wait(NULL);
 		else
 		{
-			if (execve(argv[0], argv, envp) == -1);
+			if (execve(argv[0], argv, envp) == -1)
 			{
-				perror("Error: ");
+				perror("Error");
 			}
 		}
 		if (strcmp(*argv, "exit") == 0)
