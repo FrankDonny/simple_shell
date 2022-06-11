@@ -8,5 +8,6 @@
 #include <string.h>
 
 void prompt(void);
+ssize_t _getline(char **restrict line, size_t *restrict len, FILE *restrict stream);
 
 #endif
