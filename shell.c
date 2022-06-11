@@ -7,14 +7,12 @@
 
 int main(void)
 {
-	size_t buf_size = 64;
+	size_t buf_size = 1024;
 	ssize_t line;
-	char *buffer;
-	static int first_time = 1;
-	int id;
+	char *buffer = malloc(sizeof(char) * buf_size);;
+	char *tokens;
+	int id, i;
 	char *envp[] = {"SHELL=/bin/bash", NULL};
-
-	buffer = malloc(sizeof(char) * buf_size);
 
 	while (1)
 	{
@@ -24,7 +22,13 @@ int main(void)
 
 		char *argv[line + 1];
 
-		argv[0] = "/bin/ls";
+		tokens = strtok(buffer, " ");
+
+		while (tokens != NULL)
+		{
+			argv[i++] = strdup(tokens);
+			tokens = strtok(NULL, "\n");
+		}
 
 		id = fork();
 		if (id != 0)
@@ -34,9 +38,11 @@ int main(void)
 			if (execve(argv[0], argv, envp) == -1)
 			{
 				perror("Error");
-			}
+			}	
+			strcat("/bin/", argv[0]);
+			execve(argv[0], argv, envp);
 		}
-		if (strcmp(*argv, "exit") == 0)
+		if (strcmp(argv[0], "exit") == 0)
 			break;
 	}
 	free(buffer);
