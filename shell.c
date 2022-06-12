@@ -1,4 +1,39 @@
-#include "main.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <string.h>
+
+
+/**
+ * strconcat - concatenates strings
+ * @pre_str: string to be added to the /bin/
+ * @dest: variable defined outside this function
+ * Return: the variable dest
+ */
+char *strconcat(char *pre_str, char *dest)
+{
+	char str1[] = "/bin/";
+	char str3[100];
+	int i = 0, j = 0;
+
+	while (str1[i] != '\0')
+	{
+		str3[j] = str1[i];
+		i++;
+		j++;
+	}
+	i = 0;
+	while (pre_str[i] != '\0')
+	{
+		str3[j] = pre_str[i];
+		i++;
+		j++;
+	}
+	str3[j] = '\0';
+	strcpy(dest, str3);
+	return (dest);
+}
 
 /**
  * main - the main shell function
@@ -7,47 +42,55 @@
 
 int main(void)
 {
-	size_t buf_size = 64;
+	size_t len = 0;
+	char *args = NULL;
 	ssize_t line;
-	char *buffer = malloc(sizeof(char) * buf_size);;
 	char *tokens;
-	int id, i;
-	char *envp[] = {(char *) "PATH=/bin", 0};
+	char *dest;
+	int id, i = 0;
+	char *envp[] = {(char *)"PATH=/", NULL};
 
 	while (1)
 	{
 		prompt();
 
-		line = getline(&buffer, &buf_size, stdin);
+		line = getline(&args, &len, stdin);
+		fflush(stdin);
 
-		char *argv[line + 1];
+		if (line == -1)
+			perror("Error");
 
-		tokens = strtok(buffer, " ");
+		if (feof(stdin))
+		{
+			printf("\n");
+			exit(0);
+		}
+
+		char *argv[line];
+
+		tokens = strtok(*argv, " ");
 
 		while (tokens != NULL)
 		{
-			argv[i++] = strdup(tokens);
+			argv[i++] = tokens;
 			tokens = strtok(NULL, "\n");
 		}
-		strcat("/bin/", argv[0]);
 
+		dest = strconcat(argv[0], dest);
 		id = fork();
-		if (id != 0)
-			wait(NULL);
-		else
+		if (id == 0)
 		{
-			/*strcat("/bin/", argv[0]);*/
-                        execve(argv[0], argv, envp);
-
-			if (execve(argv[0], argv, envp) == -1)
-			{
-				perror("./Shell");
-			}	
-			/*strcat("/bin/", argv[0]);*/
+			execve(dest, argv, envp);
+			if (execve(dest, argv, envp) == -1)
+				perror("Error");
 		}
-		if (strcmp(argv[0], "exit") == 0)
+		else if (id == -1)
+			printf("Could not create child process.");
+		else
+			wait(&id);
+
+		if (strcmp(dest, "exit") == 0)
 			break;
 	}
-	free(buffer);
 	return (0);
 }
