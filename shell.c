@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <string.h>
-
+#include "main.h"
 
 /**
  * strconcat - concatenates strings
@@ -43,39 +38,30 @@ char *strconcat(char *pre_str, char *dest)
 int main(void)
 {
 	size_t len = 0;
-	char *args = NULL;
 	ssize_t line;
-	char *tokens;
-	char *dest;
+	char *tokens, *dest, *args = NULL, *envp[] = {(char *)"PATH=/", NULL};
 	int id, i = 0;
-	char *envp[] = {(char *)"PATH=/", NULL};
 
 	while (1)
 	{
 		prompt();
-
 		line = getline(&args, &len, stdin);
 		fflush(stdin);
-
 		if (line == -1)
 			perror("Error");
-
 		if (feof(stdin))
 		{
 			printf("\n");
 			exit(0);
 		}
-
 		char *argv[line];
 
 		tokens = strtok(*argv, " ");
-
 		while (tokens != NULL)
 		{
 			argv[i++] = tokens;
 			tokens = strtok(NULL, "\n");
 		}
-
 		dest = strconcat(argv[0], dest);
 		id = fork();
 		if (id == 0)
@@ -83,12 +69,10 @@ int main(void)
 			execve(dest, argv, envp);
 			if (execve(dest, argv, envp) == -1)
 				perror("Error");
-		}
-		else if (id == -1)
+		} else if (id == -1)
 			printf("Could not create child process.");
 		else
 			wait(&id);
-
 		if (strcmp(dest, "exit") == 0)
 			break;
 	}

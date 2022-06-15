@@ -8,7 +8,7 @@
 * Return: length of string, 1 and -1 accordingly
 */
 
-ssize_t _getline(char **restrict line, size_t *restrict len, FILE *restrict stream)
+ssize_t _getline(char **line, size_t *len, FILE *stream)
 {
 	char chunk[128];
 
@@ -22,7 +22,6 @@ ssize_t _getline(char **restrict line, size_t *restrict len, FILE *restrict stre
 		fputs("Error, bad FILE pointer.\n", stderr);
 		return (-1);
 	}
-
 	if (*line == NULL)
 	{
 		*len = sizeof(chunk);
@@ -33,7 +32,6 @@ ssize_t _getline(char **restrict line, size_t *restrict len, FILE *restrict stre
 		}
 	}
 	(*line)[0] = '\0';
-
 	while (fgets(chunk, sizeof(chunk), stream) != NULL)
 	{
 		if (*len - strlen(*line) < sizeof(chunk))
@@ -47,12 +45,10 @@ ssize_t _getline(char **restrict line, size_t *restrict len, FILE *restrict stre
 			}
 		}
 		strcat(*line, chunk);
-
 		if ((*line)[strlen(*line) - 1] == '\n')
 		{
 			return (strlen(*len));
 		}
 	}
-
 	return (-1);
 }
