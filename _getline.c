@@ -1,3 +1,13 @@
+#include "main.h"
+
+/**
+* _getline - getline function replica
+* @line: a pointer to the line to be read
+* @len: a pointer to the length of the line
+* @stream: file stream to read the line from
+* Return: length of string, 1 and -1 accordingly
+*/
+
 ssize_t _getline(char **restrict line, size_t *restrict len, FILE *restrict stream)
 {
 	char chunk[128];
@@ -24,7 +34,7 @@ ssize_t _getline(char **restrict line, size_t *restrict len, FILE *restrict stre
 	}
 	(*line)[0] = '\0';
 
-	while (fgets(chunks, sizeof(chunk), stream) != NULL)
+	while (fgets(chunk, sizeof(chunk), stream) != NULL)
 	{
 		if (*len - strlen(*line) < sizeof(chunk))
 		{
